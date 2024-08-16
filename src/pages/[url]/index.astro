@@ -1,0 +1,22 @@
+---
+import { getQuestions } from "../../util/getQuestions";
+import { Quiz } from "../../components/Quiz";
+import Layout from "../layout.astro";
+
+const url = Buffer.from(Astro.params.url!, "base64").toString("utf-8");
+const questions = await getQuestions(url.trim()!);
+const isIframeAllowed = await fetch(url).then((d) => {
+  if (d.headers.get("X-FRAME-OPTIONS") === "ALLOW") return true;
+  if (d.headers.get("content-security-policy")?.includes("frame")) return false;
+  if (!d.headers.get("X-FRAME-OPTIONS")) return true;
+});
+---
+
+<Layout>
+  <main class="flex">
+    {isIframeAllowed && <iframe class="w-full hidden md:block" src={url} />}
+    <div class={`${isIframeAllowed ? "md:w-[768px]" : "w-full"}`}>
+      <Quiz client:only url={url} questions={questions} />
+    </div>
+  </main>
+</Layout>

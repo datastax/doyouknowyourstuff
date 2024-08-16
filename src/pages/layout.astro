@@ -1,0 +1,80 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Do You Know Your Stuff? | AI Quiz Generator by DataStax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- HTML Meta Tags -->
+    <title>Do You Know Your Stuff? | AI Quiz Generator by DataStax</title>
+    <meta
+      name="description"
+      content="Turn any web page into a quiz using DataStax RAG technology"
+    />
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://doyouknowyourstuff.tej.as/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Do You Know Your Stuff? | AI Quiz Generator by DataStax"
+    />
+    <meta
+      property="og:description"
+      content="Turn any web page into a quiz using DataStax RAG technology"
+    />
+    <meta
+      property="og:image"
+      content="https://doyouknowyourstuff.tej.as/og-image.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="doyouknowyourstuff.tej.as" />
+    <meta property="twitter:url" content="https://doyouknowyourstuff.tej.as/" />
+    <meta
+      name="twitter:title"
+      content="Do You Know Your Stuff? | AI Quiz Generator by DataStax"
+    />
+    <meta
+      name="twitter:description"
+      content="Turn any web page into a quiz using DataStax RAG technology"
+    />
+    <meta
+      name="twitter:image"
+      content="https://doyouknowyourstuff.tej.as/og-image.png"
+    />
+    <style is:global>
+      /* ===== Scrollbar CSS ===== */
+      /* Firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #878787 #000000;
+      }
+
+      /* Chrome, Edge, and Safari */
+      *::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: #000000;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: #878787;
+        border-radius: 10px;
+        border: 0px solid #000000;
+      }
+    </style>
+  </head>
+  <body class={`bg-black text-white`} style="background-image:url(/bg.png);">
+    <main class="h-screen w-screen text-center grid gap-8">
+      <slot />
+    </main>
+  </body>
+</html>

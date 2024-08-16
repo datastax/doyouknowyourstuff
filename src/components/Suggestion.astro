@@ -1,0 +1,15 @@
+---
+const { url, label } = Astro.props;
+const nextUrl = Buffer.from(url).toString("base64");
+---
+
+<a
+  data-url={url}
+  href={`/${nextUrl}`}
+  class="p-4 md:w-[33%] w-full suggestion hover:-translate-y-1 transition rounded flex flex-col text-left border font-ds hover:bg-neutral-800 hover:border-neutral-600 border-neutral-700 bg-neutral-900"
+>
+  <span class="font-semibold pointer-events-none">{label}</span>
+  <span class="text-sm w-full text-ellipsis overflow-hidden pointer-events-none"
+    >{new URL(url).host}</span
+  ></a
+>

@@ -1,0 +1,101 @@
+---
+import { Spinner } from "../components/Spinner";
+import Suggestion from "../components/Suggestion.astro";
+import Layout from "./layout.astro";
+
+const url = new URL(Astro.request.url).searchParams.get("url");
+
+if (url) {
+  return Astro.redirect(`/${Buffer.from(url).toString("base64")}`);
+}
+---
+
+<Layout>
+  <div
+    class="grid max-w-screen-md mx-auto items-center p-8 justify-center content-center gap-8"
+  >
+    <img alt="DataStax" src="/datastax.svg" class="w-full" />
+    <p class="font-ds text-left text-xl leading-relaxed">
+      Pick a website below to generate a multiple choice quiz about its contents
+      with DataStax Generative AI.
+    </p>
+    <div class="flex md:flex-row flex-col items-center gap-2">
+      <Suggestion
+        url="https://www.datastax.com/guides/what-is-retrieval-augmented-generation"
+        label="RAG + GenAI"
+      />
+      <Suggestion
+        url="https://en.m.wikipedia.org/wiki/Portal:Current_events"
+        label="Today's News"
+      />
+      <Suggestion
+        url="https://www.frontendinterviewhandbook.com/javascript-questions"
+        label="JavaScript"
+      />
+    </div>
+    <form id="form" action="/" method="get" class="grid gap-2">
+      <label class="text-xl font-ds grid gap-2 text-left w-full">
+        Or, enter any web address:
+        <input
+          type="text"
+          pattern="https://.*"
+          title="URL must start with https://"
+          class="text-base text-black p-2 rounded"
+          placeholder="https://en.wikipedia.org"
+          name="url"
+          id="url-input"
+        />
+      </label>
+      <button
+        id="start-button"
+        class="bg-white font-ds flex items-center gap-2 justify-center disabled:opacity-50 rounded font-bold text-black p-2"
+      >
+        <span id="start-caption">Start the Quiz</span>
+        <div id="loading-caption" class="hidden items-center gap-2">
+          <Spinner />
+          <span id="loading-caption-label">Loading...</span>
+        </div>
+      </button>
+    </form>
+  </div>
+  <script>
+    const startButton = document.getElementById("start-button")!;
+    const form = document.getElementById("form")!;
+    const sequentialLoadingCaptions = [
+      "Visiting website...",
+      "Scraping contents...",
+      "Creating Astra Collection...",
+      "Inserting data...",
+      "Performing RAG...",
+      "Generating quiz...",
+    ];
+    const go = () => {
+      startButton.setAttribute("disabled", "disabled");
+      startButton.classList.add("cursor-not-allowed");
+      startButton.querySelector("#start-caption")!.classList.add("hidden");
+      startButton.querySelector("#loading-caption")!.classList.remove("hidden");
+      startButton.querySelector("#loading-caption")!.classList.add("flex");
+      let i = 0;
+      const interval = setInterval(() => {
+        startButton.querySelector("#loading-caption-label")!.textContent =
+          sequentialLoadingCaptions[i];
+        i++;
+        if (i === sequentialLoadingCaptions.length) {
+          clearInterval(interval);
+        }
+      }, 30000 / sequentialLoadingCaptions.length);
+    };
+    document.addEventListener("click", (e) => {
+      // @ts-expect-error
+      if (!e.target!.classList?.contains("suggestion")) {
+        return;
+      }
+      // @ts-expect-error
+      const url = e.target!.dataset.url;
+      const urlInput = document.getElementById("url-input") as HTMLInputElement;
+      urlInput.value = url;
+      go();
+    });
+    form.addEventListener("submit", go);
+  </script>
+</Layout>

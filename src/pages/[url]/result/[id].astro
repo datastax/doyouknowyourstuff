@@ -1,0 +1,70 @@
+---
+import Layout from "../../layout.astro";
+import { db } from "../../../util/db";
+
+const collection = db.collection("results");
+const result = await collection.findOne({ _id: Astro.params.id });
+const score = result!.answers.reduce((acc: any, a: any, i: any) => {
+  return acc + (a === result!.questions[i].correctAnswerIndex ? 1 : 0);
+}, 0);
+const scoreEmojis: any = {
+  0: "😢",
+  1: "😕",
+  2: "😐",
+  3: "😊",
+  4: "😄",
+  5: "🎉",
+};
+const quiz = Buffer.from(result!.url).toString("base64");
+const shareUrl = `${scoreEmojis[score]} I just scored ${score}/5 on an AI-generated quiz about ${result!.url} by @datastax! 
+
+👉 Try it yourself at https://doyouknowyourstuff.tej.as/${quiz}`;
+---
+
+<Layout>
+  <main
+    class="p-8 grid gap-8 content-start text-left w-full max-w-screen-md mx-auto"
+  >
+    <h1
+      class="font-ds font-semibold text-4xl flex items-center gap-2 w-full mx-auto justify-center"
+    >
+      <span role="img">{scoreEmojis[score]}</span> You scored {score}/5!
+    </h1>
+    <div class="flex gap-2">
+      <a
+        href=`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareUrl)}`
+        class="bg-white w-1/2 md:w-[75%] text-center flex items-center justify-center text-black rounded-full p-2 font-extrabold"
+        >Share on 𝕏</a
+      >
+      <a
+        href="/"
+        class="bg-neutral-800 w-1/2 md:w-[25%] hover:bg-neutral-700 text-center flex items-center justify-center rounded-full p-2 font-extrabold"
+        >Play Again</a
+      >
+    </div>
+    <ul class="grid gap-4 text-lg">
+      {
+        result!.questions.map((q: any, i: any) => {
+          const isWrong = result!.answers[i] !== q.correctAnswerIndex;
+          return (
+            <li class="grid bg-neutral-800 border border-neutral-700 rounded-lg p-4 gap-2">
+              <p class="">
+                {isWrong ? "❌" : "✅"} {q.question}
+              </p>
+              <p>
+                <strong class="text-green-300">Answer:</strong>{" "}
+                {q.answers[q.correctAnswerIndex]}
+              </p>
+              {isWrong && (
+                <p>
+                  <strong class="text-red-400">Your Answer:</strong>{" "}
+                  {q.answers[result!.answers[i]]}
+                </p>
+              )}
+            </li>
+          );
+        })
+      }
+    </ul>
+  </main>
+</Layout>
